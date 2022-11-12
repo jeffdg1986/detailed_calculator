@@ -1,13 +1,128 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+button{
+    background-color: yellowgreen;
+    border: 1px solid black;
+    vertical-align: middle;
+    font-weight: bolder;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+button:hover{
+    background-color: lightgreen;
+}
+ .container{
+    display: grid;
+    justify-content: center;
+    margin: 0;
+    position: relative;
+}
+.screen-container{
+    border: 5px solid lightgrey;
+    color: whitesmoke;
+    background-color: black;
+    text-align: right;
+} 
+.interface{
+    border: 2px solid black;
+    background-color: lightgrey;
+    max-width: 320px;
+}
+.button-container{
+    min-width: 320px;
+    max-width: fit-content;
+    background-color: lightgrey;
+    position:relative;
+} 
+.error-message{
+    text-align: center;
+    color: red;
+    width:auto;
+    min-height: 20px;
+    max-height: fit-content;
+    border-bottom: 3px solid rgb(37, 11, 72);
+    border-left: 3px solid rgb(37, 11, 72);
+    border-right: 3px solid rgb(37, 11, 72);
+}
+footer{
+    text-align: center;
+}
+.numbers, .special-operators, .constants, .trig-functions, .operators, .log-functions, .edits, .special-functions{
+    width: 60px;
+    height: 30px;
+    margin: 2px;
+    border-radius: 5%;
+}
+.equals{
+    width: 124px;
+    height: 30px;
+    margin: 2px;
+    border-radius: 5%;
+}
+.constants:hover{
+    background-color: coral;
+}
+.constants{
+    background-color: chocolate;
+}
+.log-functions:hover, .special-functions:hover{
+    background-color:cadetblue;
+}
+.log-functions, .special-functions{
+    background-color:steelblue;
+    vertical-align: middle;
+}
+.trig-functions{
+    background-color: bisque;
+}
+.trig-functions:hover{
+    background-color: beige;
+}
+.edits{
+    background-color:darkslateblue;
+    color: whitesmoke
+}
+.edits:hover{
+    background-color: rgba(80, 80, 167, 0.755);
+    color: whitesmoke
+}
+.numbers{
+    background-color: aliceblue;
+    color: black
+}
+.numbers:hover{
+    background-color:lightsteelblue;
+    color: black;
+}
+.equals:hover{
+    background-color:dimgrey;
+    color: whitesmoke;
+}
+.equals{
+    background-color:black;
+    color: whitesmoke;
+}
+.equation{
+    min-height: 15px;
+    max-height: fit-content;
+    font-size: smaller;
+    border-left: 3px solid rgb(37, 11, 72);
+    border-right: 3px solid rgb(37, 11, 72);
+    border-top: 3px solid rgb(37, 11, 72);
+}
+.input{
+    min-height: 20px;
+    max-height: fit-content;
+    border-left: 3px solid rgb(37, 11, 72);
+    border-right: 3px solid rgb(37, 11, 72);
+}
+img{
+    width: 10%;
+    height: 10%;
+    position: relative;
+    vertical-align: middle;
+    left: 145px;
+}
+.branding{
+    position: relative;
+    width: 250px;
+    left: 5px;
+    font-family:cursive;
+    
 }
