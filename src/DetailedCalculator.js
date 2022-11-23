@@ -2,7 +2,7 @@
 // personalized screen color and/or sounds playing upon click;
 // add the ability to use the keypad with the onkeypress / onkeydown function;
 // add the arc trig and hyperbolic trig functions in secondary and tertiary component made available onclick via toggle?;
-// add parenthesis
+// allow for multiple decimals in parenthesis
 // there are bugs with the x^y function
 // add a fadeout animation to the error message
 
@@ -15,23 +15,28 @@ class DetailedCalculator extends Component {
       previousVal: '',
       currentVal: '',
       errorMessage: '',
-      functionType: 'none', // think trig, log, hyperbolic -- could probably have another component for those with a dropdown to switch over
-      variableType: 'none' // think radians, degrees, gradient, constants, etc
-     } 
+      variableType: 'none', // think radians, degrees, gradient, constants, number, operator, etc
+      parenthesisCount: 0 // countLeft - countRight, if not equal to zero block previousVal movement
+    } 
   }
    numbers = (e) => {
+    // if a constant is present, don't allow numbers to be appended to it
     if(this.state.variableType === 'constant'){
       this.setState({
         errorMessage: 'Constants cannot be altered, only operated on!'
       })
     }
-     else if(this.state.currentVal !== '' && this.state.currentVal !== '0'){
-    this.setState({
-      currentVal: this.state.currentVal + e.target.value,
-      variableType: 'number'
-    })
-        }
-    else if(this.state.currentVal === '' || this.state.currentVal === '0'){
+    // if something is there that is not zero allow numbers to be appended
+     else if(this.state.currentVal !== '' 
+      && this.state.currentVal !== '0'){
+      this.setState({
+        currentVal: this.state.currentVal + e.target.value,
+        variableType: 'number'
+      })
+    }
+        // if only zero is present, replace it with the button pressed
+    else if(this.state.currentVal === '' 
+      || this.state.currentVal === '0'){
       this.setState({
         currentVal: e.target.value,
         variableType: 'number'
@@ -40,26 +45,34 @@ class DetailedCalculator extends Component {
     };
 
     operators = (e) => {
-      if(this.state.currentVal === '' && this.state.previousVal === ''){
-        this.setState({
-          errorMessage: 'Enter a number first!',
-          variableType: 'operator'
-        })
+      if(this.state.currentVal === '' 
+        && this.state.previousVal === ''){
+          this.setState({
+            errorMessage: 'Enter a number first!',
+            variableType: 'operator'
+          })
       }
 
-      else if(this.state.currentVal === '' && isNaN(this.state.previousVal[this.state.previousVal.length])===true) {
+      else if(this.state.currentVal === '' 
+        && isNaN(this.state.previousVal[this.state.previousVal.length])===true) {
         // says that if the last point of entry is an operator and so too is the current button, then replace
         // the last entry with current operator
-        this.setState({
-          previousVal: this.state.previousVal.slice(0 , this.state.previousVal.length-1) + e.target.value,
-          variableType: 'operator'
-        })
+          this.setState({
+            previousVal: this.state.previousVal.slice(0 , this.state.previousVal.length-1) + e.target.value,
+            variableType: 'operator'
+          })
       }
 
-      else if(this.state.currentVal !== ''){
+      else if(this.state.currentVal !== '' && this.state.parenthesisCount === 0){
+          this.setState({
+            previousVal: this.state.previousVal + this.state.currentVal  + e.target.value,
+            currentVal: '',
+            variableType: 'operator'
+          })
+      }
+      else if(this.state.currentVal !== '' && this.state.parenthesisCount !== 0){
         this.setState({
-          previousVal: this.state.previousVal + this.state.currentVal  + e.target.value,
-          currentVal: '',
+          currentVal: this.state.currentVal + e.target.value,
           variableType: 'operator'
         })
       }
@@ -67,7 +80,7 @@ class DetailedCalculator extends Component {
 
   decimal = (e) => {
     if(this.state.currentVal.includes('.') === false){
-      this.setState({
+        this.setState({
         currentVal: this.state.currentVal + e.target.value,
         variableType: 'decimal'
       })
@@ -98,7 +111,8 @@ class DetailedCalculator extends Component {
       currentVal: '',
       previousVal: '',
       errorMessage: '',
-      variableType: 'none'
+      variableType: 'none',
+      parenthesisCount: 0,
     })
   };
   
@@ -106,25 +120,31 @@ class DetailedCalculator extends Component {
     this.setState({
       currentVal: '',
       errorMessage: '',
-      variableType: 'none'
+      variableType: 'none',
+      parenthesisCount: 0,
     })
   };
 
   equals = () =>{
-    if(this.state.previousVal === '' || this.state.currentVal === '' || isNaN(this.state.currentVal)===true){
+    if(this.state.previousVal === '' 
+      || this.state.currentVal === '' 
+      || (isNaN(this.state.currentVal)===true && (this.state.parenthesisCount !== 0)) 
+      || this.state.parenthesisCount !==0){
       this.setState({
-        errorMessage: 'There\'s no operation present to perform!'
+        errorMessage: 'Incorrect syntax / no operation present'
       })
     }
-    else if(this.state.previousVal !== '' && isNaN(this.state.currentVal) === false){
-      let x = this.state.previousVal + this.state.currentVal;
-      this.setState({
-        
+    else if(this.state.previousVal !== '' 
+      && this.state.parenthesisCount === 0){
+        let x = this.state.previousVal + this.state.currentVal;
+        this.setState({
+
         // eslint-disable-next-line
-        currentVal: eval(x.replace(/--/g, '+')).toFixed(9),
-        previousVal: '',
-        errorMessage: '',
-        variableType: 'none'
+          currentVal: eval(x.replace(/--/g, '+')).toFixed(9),
+          previousVal: '',
+          errorMessage: '',
+          variableType: 'none',
+          parenthesisCount: 0,
 })
     }
     };
@@ -135,36 +155,59 @@ class DetailedCalculator extends Component {
         errorMessage: 'Constants cannot be altered, only operated on!'
       })
     }
-   else if(this.state.currentVal === ''){
-this.setState({
-  currentVal: e.target.value,
-  variableType: 'number'
-})
+    else if(this.state.currentVal === ''){
+      this.setState({
+        errorMessage: '',
+        currentVal: e.target.value,
+        variableType: 'number'
+      })
     }
-else if(this.state.currentVal.includes('.') === true){
-  this.setState({
-    currentVal: this.state.currentVal + e.target.value,
-    variableType: 'number'
-  })
-}
-else if(this.state.currentVal === '0'){return}
-else if(this.state.currentVal.match(/[1-9]/g).length >= 1){
-  this.setState({
-    currentVal: this.state.currentVal + e.target.value,
-    variableType: 'number'
-  })
+    else if(this.state.currentVal.includes('.') === true){
+      this.setState({
+        errorMessage: '',
+        currentVal: this.state.currentVal + e.target.value,
+        variableType: 'number'
+      })
+    }
+    else if(this.state.currentVal === '0'){return}
+    else if(this.state.currentVal.match(/[1-9]/g).length >= 1){
+      this.setState({
+        currentVal: this.state.currentVal + e.target.value,
+        variableType: 'number'
+      })
 }
   }
 
-  parenthesisLeft = () => {
+  parenthesisLeft = (e) => {
     this.setState({
-      errorMessage: "Not yet coded"
+      currentVal: this.state.currentVal + e.target.value,
+      errorMessage: '',
+      parenthesisCount: this.state.parenthesisCount + 1,
     })
   };
-  parenthesisRight = () => {
+  parenthesisRight = (e) => {
+    let countRight = 0;
+    let countLeft = 0;
+    for(let i=0; i < this.state.currentVal.length; i++){
+      if(this.state.currentVal[i] === '('){
+        countLeft = countLeft + 1
+      }
+      else if(this.state.currentVal[i]=== ')'){
+        countRight = countRight + 1
+      }
+    }
+    if(countLeft > countRight){
     this.setState({
-      errorMessage: "Not yet coded"
+      errorMessage: '',
+      currentVal: this.state.currentVal + e.target.value,
+      parenthesisCount: this.state.parenthesisCount -1,
     })
+    }
+    else if(countLeft <= countRight){
+      this.setState({
+        errorMessage: 'Incorrect Syntax'
+    })
+    }
   };
 
 pozneg = () => {
@@ -188,9 +231,15 @@ constants = (e) => {
       variableType: 'constant'
     })
   }
-  else if(this.state.currentVal !== '' && this.state.functionType === 'none'){
+  else if(this.state.currentVal !== '' && this.state.variableType !== 'number' && this.state.variableType !== 'constant'){
     this.setState({
-      errorMessage: 'Constants cannot be altered, only operated on!'
+      variableType: 'constant',
+      currentVal: this.state.currentVal + e.target.value,
+    })
+  }
+  else if(this.state.currentVal !== '' && (this.state.variableType === 'number' || this.state.variableType === 'constant')){
+    this.setState({
+      errorMessage: 'Invalid syntax' 
     })
   }
 };
@@ -310,8 +359,8 @@ if(this.state.currentVal !== ''){
           <button className='edits' onClick={this.backspace}>DEL</button>
           <button className='edits' onClick={this.allClear}>AC</button>
           <button className='edits' onClick={this.clear}>CE</button>
-          <button className='edits' onClick={this.parenthesisLeft}>(</button>
-          <button className='edits' onClick={this.parenthesisRight}>)</button>
+          <button className='edits' onClick={this.parenthesisLeft} value='('>(</button>
+          <button className='edits' onClick={this.parenthesisRight} value=')'>)</button>
         </div>
         <div className='second-row'>
           <button className='trig-functions' onClick={this.sin}>sin()</button>
