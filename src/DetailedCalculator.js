@@ -7,6 +7,7 @@
 // add a fadeout animation to the error message
 
 import './index.css';
+import peptidePic from './pictures/peptide.png';
 import React, { Component } from 'react';
 class DetailedCalculator extends Component {
   constructor(props) {
@@ -348,7 +349,7 @@ if(this.state.currentVal !== ''){
   <>
   <div className='container'>
     <div className='interface'>
-      <div className='branding'>Paracrine Solutions<img src="https://img.icons8.com/sf-regular/344/peptide.png" alt='https://www.google.com' /></div>
+      <div className='branding'>Paracrine Solutions<img src={peptidePic} alt='https://img.icons8.com/sf-regular/344/peptide.png' /></div>
       <div className='screen-container'>
         <div className='equation'>{this.state.previousVal}</div>
         <div className='input'>{this.state.currentVal}</div>
